@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<h2>Welcome ${user.name}</h2>
+<h2>Welcome ${username}</h2>
 
 <h2>List of items</h2>
 

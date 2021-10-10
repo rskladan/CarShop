@@ -8,12 +8,15 @@
 </head>
 <body>
 
-<form:form method="post" action="/register" modelAttribute="user">
+<form:form method="post" action="/registration" modelAttribute="user">
     Name: <form:input path="name"/></br>
     <form:errors path="name"/></br>
 
     Surname: <form:input path="surname"/></br>
     <form:errors path="surname"/></br>
+
+    Username: <form:input path="username"/></br>
+    <form:errors path="username"/></br>
 
     E-mail: <form:input path="email"/></br>
     <form:errors path="email"/></br>

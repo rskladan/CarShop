@@ -2,7 +2,7 @@ package pl.coderslab.carshop.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.coderslab.carshop.exception.UserAlreadyExistException;
@@ -10,28 +10,27 @@ import pl.coderslab.carshop.exception.UserWrongValidationException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
 public class UserService {
 
-    @Autowired
+
     private final UserRepository userRepository;
-
-    @Autowired
     private final Validator validator;
+    private BCryptPasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    public UserService(UserRepository userRepository, Validator validator, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, Validator validator, BCryptPasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.validator = validator;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     public void createUser(User user) throws UserAlreadyExistException {
@@ -39,11 +38,22 @@ public class UserService {
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 
         if (checkIfUserExist(user.getEmail())) {
-            throw new UserAlreadyExistException("User already exists for this email");
+            throw new UserAlreadyExistException("User already exists for this e-mail");
         } else if (violations.isEmpty()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setEnabled(true);
+            Role userRole = roleRepository.findByName("USER");
+            user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
             userRepository.save(user);
         }
+    }
+
+    public User saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEnabled(true);
+        Role userRole = roleRepository.findByName("USER");
+        user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+        return userRepository.save(user);
     }
 
     private boolean checkIfUserExist(String email) {
@@ -57,6 +67,10 @@ public class UserService {
     public User findUserByEmail(String email) {
 
         return userRepository.findByEmail(email);
+    }
+
+    public User findByUserName(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public boolean validateUser(User user) throws UserWrongValidationException {

@@ -3,23 +3,20 @@ package pl.coderslab.carshop.user;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.FlashMap;
-import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import pl.coderslab.carshop.exception.UserAlreadyExistException;
-import pl.coderslab.carshop.exception.UserWrongValidationException;
 import pl.coderslab.carshop.item.Item;
 import pl.coderslab.carshop.item.ItemRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
@@ -36,63 +33,74 @@ public class UserController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
 
-    @GetMapping("/register")
-    public String registerUser(Model model) {
-        model.addAttribute("user", new User());
-
-        return "register-form";
-    }
-
-    @PostMapping("/register")
-    public String registerUser(@Valid User user, BindingResult result){
-
-            try {
-                userService.createUser(user);
-            } catch (UserAlreadyExistException e) {
-                result.rejectValue("email", "user.email", e.getMessage());
-            }
-
-        if(result.hasErrors()) {
-            return "register-form";
-        } else {
-            return "loginPage";
-        }
-    }
-
-    @GetMapping("/login")
-    public String loginUser(Model model) {
-        model.addAttribute("user", new User());
-        return "loginPage";
-    }
-
-    @PostMapping("/login")
-    public String loginUser(User user, Model model) {
-
-
-        try {
-            userService.validateUser(user);
-
-        } catch (UserWrongValidationException e) {
-            log.error(e.getMessage());
-            model.addAttribute("error", "Wrong login or password");
-            return "loginPage";
-        }
-
-        model.addAttribute("user", user);
-        return "redirect:/welcome";
+    @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
+    public ModelAndView login(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("user", new User());
+        log.debug("TEST");
+        modelAndView.setViewName("login");
+        return modelAndView;
     }
 
     @GetMapping("/welcome")
-    public String welcomeUser(Model model) {
+    public ModelAndView welcome(@AuthenticationPrincipal UserDetails customUser){
+        log.debug("Custom user: " + customUser.getClass());
 
-        List<Item> allItems = itemRepository.findAll();
-        model.addAttribute("allItems", allItems);
-        model.addAttribute("user", new User());
 
-        
-        return "welcome";
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUserName(auth.getName());
+        modelAndView.addObject("userName", "Welcome " + user.getUsername() + "/" + user.getName() + " " + user.getSurname() + " (" + user.getEmail() + ")");
+        modelAndView.addObject("adminMessage","Content Available Only for Users with User Role");
+        modelAndView.setViewName("welcome");
+        return modelAndView;
     }
 
+//    @GetMapping("/welcome")
+//    public ModelAndView welcome(){
+//        ModelAndView modelAndView = new ModelAndView();
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User user = userService.findByUserName(auth.getName());
+//        modelAndView.addObject("userName", "Welcome " + user.getUsername() + "/" + user.getName() + " " + user.getSurname() + " (" + user.getEmail() + ")");
+//        modelAndView.addObject("adminMessage","Content Available Only for Users with User Role");
+//        modelAndView.setViewName("home");
+//        return modelAndView;
+//    }
 
+    @RequestMapping(value="/registration", method = RequestMethod.GET)
+    public ModelAndView registration(){
+        ModelAndView modelAndView = new ModelAndView();
+        User user = new User();
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("registration");
+        return modelAndView;
+    }
 
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    public ModelAndView createNewUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
+        ModelAndView modelAndView = new ModelAndView();
+        User userExists = userService.findByUserName(user.getUsername());
+        User emailExists = userService.findUserByEmail(user.getEmail());
+        if (userExists != null) {
+            bindingResult
+                    .rejectValue("username", "error.user",
+                            "There is already a user registered with the user name provided");
+        }
+        if (emailExists != null) {
+            bindingResult
+                    .rejectValue("email", "error.user",
+                            "There is already a user registered with the email provided");
+        }
+
+        if (bindingResult.hasErrors()) {
+            modelAndView.setViewName("registration");
+        } else {
+                userService.saveUser(user);
+                modelAndView.addObject("successMessage", "User has been registered successfully");
+                modelAndView.addObject("user", new User());
+                modelAndView.setViewName("login");
+
+        }
+        return modelAndView;
+    }
 }
