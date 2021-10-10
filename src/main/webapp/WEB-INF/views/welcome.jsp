@@ -5,21 +5,17 @@
 <html>
 <head>
     <title>Welcome</title>
+    <link href='<c:url value="/WEB-INF/css/styles.css"/>' rel="stylesheet">
 </head>
 <body>
+<jsp:include page="/WEB-INF/views/header.jsp"/>
 
-<h2>Welcome ${username}</h2>
+<h2>Welcome, ${loggedUser.name} ${loggedUser.surname}</h2>
 
-<h2>List of items</h2>
+<br>
 
-<c:forEach var="item" items="${allItems}">
-    Item id: ${item.id}
-    Item name: ${item.name}
-    Item description: ${item.description}
-    Item price: ${item.price}
-    Item productCode: ${item.productCode}
-    Item manufacturer: ${item.manufacturer.name}
-    <br>
-</c:forEach>
+<a href="/shoppingCart">Shopping cart</a>
+
+<jsp:include page="/WEB-INF/views/footer.jsp"/>
 </body>
 </html>

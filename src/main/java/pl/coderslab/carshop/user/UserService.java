@@ -33,27 +33,25 @@ public class UserService {
         this.roleRepository = roleRepository;
     }
 
-    public void createUser(User user) throws UserAlreadyExistException {
-
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
-
-        if (checkIfUserExist(user.getEmail())) {
-            throw new UserAlreadyExistException("User already exists for this e-mail");
-        } else if (violations.isEmpty()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setEnabled(true);
-            Role userRole = roleRepository.findByName("USER");
-            user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-            userRepository.save(user);
-        }
-    }
-
     public User saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
         Role userRole = roleRepository.findByName("USER");
         user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         return userRepository.save(user);
+    }
+
+    public User updateUser(User user) {
+        User userToUpdate = userRepository.getById(user.getId());
+        userToUpdate.setId(user.getId());
+        userToUpdate.setName(user.getName());
+        userToUpdate.setSurname(user.getSurname());
+        userToUpdate.setUsername(user.getUsername());
+        userToUpdate.setEmail(user.getEmail());
+        user.setEnabled(true);
+        Role userRole = roleRepository.findByName("USER");
+        user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+        return userRepository.save(userToUpdate);
     }
 
     private boolean checkIfUserExist(String email) {
@@ -64,17 +62,13 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User findUserByEmail(String email) {
-
-        return userRepository.findByEmail(email);
-    }
+    public User findUserByEmail(String email) {return userRepository.findByEmail(email); }
 
     public User findByUserName(String username) {
         return userRepository.findByUsername(username);
     }
 
     public boolean validateUser(User user) throws UserWrongValidationException {
-
 
         if(findUserByEmail(user.getEmail()) != null && passwordEncoder.matches(user.getPassword(), findUserByEmail(user.getEmail()).getPassword())){
             return true;

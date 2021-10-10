@@ -39,8 +39,10 @@ public class SpringDataUserDetailsService implements UserDetailsService {
         return grantedAuthorities;
     }
 
-    private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                user.isEnabled(), true, true, true, authorities);
+    private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> grantedAuthorities) {
+//        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+//                user.isEnabled(), true, true, true, authorities);
+
+        return new CurrentUser(user.getUsername(), user.getPassword(), grantedAuthorities, user);
     }
 }

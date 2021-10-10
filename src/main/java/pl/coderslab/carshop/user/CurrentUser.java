@@ -16,5 +16,5 @@ public class CurrentUser extends User{
     public pl.coderslab.carshop.user.User getUser() {
         return user;
     }
-    
+
 }
