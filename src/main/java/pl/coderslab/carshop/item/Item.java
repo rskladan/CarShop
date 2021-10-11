@@ -3,6 +3,7 @@ package pl.coderslab.carshop.item;
 import lombok.Data;
 import pl.coderslab.carshop.manufacturer.Manufacturer;
 
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,6 @@ public class Item {
     @Size(max = 500)
     private String description;
 
-    @Min(1)
     private BigDecimal price;
 
     @ManyToOne

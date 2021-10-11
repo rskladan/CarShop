@@ -1,7 +1,6 @@
 package pl.coderslab.carshop.user;
 
 import lombok.Data;
-import lombok.Getter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

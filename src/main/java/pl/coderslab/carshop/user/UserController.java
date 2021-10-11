@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import pl.coderslab.carshop.cart.Cart;
+import pl.coderslab.carshop.cart.CartService;
 import pl.coderslab.carshop.item.Item;
 import pl.coderslab.carshop.item.ItemRepository;
 
@@ -23,6 +25,7 @@ public class UserController {
 
     private final UserService userService;
     private final ItemRepository itemRepository;
+    private final CartService cartService;
     private PasswordEncoder passwordEncoder;
     private HttpSession httpSession;
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -119,6 +122,19 @@ public class UserController {
         modelAndView.setViewName("shoppingCart");
 
 
+        return modelAndView;
+    }
+
+    @GetMapping("/addToCart")
+    public ModelAndView addToCart(){
+        ModelAndView modelAndView = new ModelAndView();
+        Cart cart = new Cart();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findByUserName(auth.getName());
+        cartService.saveCart(cart, user);
+        modelAndView.addObject("loggedUser", user);
+        modelAndView.addObject("cart", cart);
+        modelAndView.setViewName("shoppingCartDetails");
         return modelAndView;
     }
 }
