@@ -25,10 +25,4 @@ public class Cart {
     @ManyToOne
     private User user;
 
-//    @Column(name = "createdDate")
-//    @Basic
-//    private Timestamp createdDate;
-
-
-
 }

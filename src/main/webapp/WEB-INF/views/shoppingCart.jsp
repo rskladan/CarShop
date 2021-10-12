@@ -25,7 +25,7 @@
         <td> </td>
     </tr>
 
-    <c:forEach var="item" items="${allItems}">
+    <c:forEach var="item" items="${itemsList}">
     <tr>
         <td>${item.id}</td>
         <td>${item.name}</td>
@@ -33,12 +33,13 @@
         <td>${item.price}</td>
         <td>${item.productCode}</td>
         <td>${item.manufacturer.name}</td>
-        <td><a href="/addToCart">Add to cart</a></td>
+        <td><a href="/addToCart/${item.id}">Add to cart</a></td>
     </tr>
     </c:forEach>
 
 
 </table>
+
 
 <jsp:include page="/WEB-INF/views/footer.jsp"/>
 </body>

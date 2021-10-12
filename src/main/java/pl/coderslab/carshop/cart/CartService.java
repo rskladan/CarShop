@@ -15,7 +15,7 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-//    private SessionFactory sessionFactory;
+
 
     public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository) {
         this.cartRepository = cartRepository;
@@ -26,7 +26,7 @@ public class CartService {
 
     public void saveCart(Cart cart, User user){
         LocalDateTime localDateTime = LocalDateTime.now();
-//        Session session = this.sessionFactory.getCurrentSession();
+
         cart.setUser(user);
 //        cart.setCreatedDate(Timestamp.valueOf(localDateTime));
         cartRepository.save(cart);

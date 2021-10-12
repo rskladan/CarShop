@@ -24,11 +24,17 @@ public class CartItem {
 
     private BigDecimal price;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "cartItem_cart", joinColumns = @JoinColumn(name = "cartItem_id"), inverseJoinColumns = @JoinColumn(name = "cart_id"))
-    private Set<CartItem> carts;
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "cartItem_cart", joinColumns = @JoinColumn(name = "cartItem_id"), inverseJoinColumns = @JoinColumn(name = "cart_id"))
+//    private Set<CartItem> carts;
+//
+//    @ManyToMany
+//    @JoinTable(name = "cartItem_item", joinColumns = @JoinColumn(name = "cartItem_id"), inverseJoinColumns = @JoinColumn(name = "item_id"))
+//    private Set<Item> items;
 
-    @ManyToMany
-    @JoinTable(name = "cartItem_item", joinColumns = @JoinColumn(name = "cartItem_id"), inverseJoinColumns = @JoinColumn(name = "item_id"))
-    private Set<Item> items;
+    @ManyToOne
+    private Cart cart;
+
+    @ManyToOne
+    private Item item;
 }

@@ -20,7 +20,11 @@ public class CartItemService {
         this.itemRepository = itemRepository;
     }
 
-    public CartItem saveCartItem(CartItem cartItem, Item item){
+    public CartItem saveCartItem(CartItem cartItem, Item item, Cart cart){
+
+        cartItem.setQuantity(1);
+        cartItem.setItem(item);
+        cartItem.setCart(cart);
         BigDecimal totalCost = item.getPrice().multiply(new BigDecimal(cartItem.getQuantity()));
         cartItem.setPrice(totalCost);
         return cartItemRepository.save(cartItem);

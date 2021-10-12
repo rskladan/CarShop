@@ -1,8 +1,11 @@
 package pl.coderslab.carshop.user;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,8 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import pl.coderslab.carshop.cart.Cart;
-import pl.coderslab.carshop.cart.CartService;
+import pl.coderslab.carshop.cart.*;
 import pl.coderslab.carshop.item.Item;
 import pl.coderslab.carshop.item.ItemRepository;
 
@@ -21,11 +23,14 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@SessionAttributes({"loggedUser", "currentCart", "itemsList"})
 public class UserController {
 
     private final UserService userService;
     private final ItemRepository itemRepository;
     private final CartService cartService;
+    private final CartItemService cartItemService;
+    private final CartItemRepository cartItemRepository;
     private PasswordEncoder passwordEncoder;
     private HttpSession httpSession;
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -81,7 +86,12 @@ public class UserController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findByUserName(auth.getName());
         modelAndView.addObject("loggedUser", user);
-        modelAndView.setViewName("welcome");
+        Cart cart = new Cart();
+        cartService.saveCart(cart, user);
+        modelAndView.addObject("currentCart", cart);
+        List<Item> allitems = itemRepository.findAll();
+        modelAndView.addObject("itemsList", allitems);
+        modelAndView.setViewName("/shoppingCart");
         return modelAndView;
     }
 
@@ -90,7 +100,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findByUserName(auth.getName());
-        modelAndView.addObject("loggedUser", user);
+//        modelAndView.addObject("loggedUser", user);
         modelAndView.setViewName("accountInfo");
         return modelAndView;
     }
@@ -102,39 +112,33 @@ public class UserController {
             modelAndView.setViewName("accountInfo");
         } else {
             log.info("User details:" + user.toString());
-            User loggedUser = userService.updateUser(user);
-            modelAndView.addObject("loggedUser", loggedUser);
-            modelAndView.setViewName("redirect:/welcome");
+            modelAndView.setViewName("redirect:/shoppingCart");
         }
         return modelAndView;
     }
 
     @GetMapping("/shoppingCart")
     public ModelAndView shoppingCart() {
-
         ModelAndView modelAndView = new ModelAndView();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByUserName(auth.getName());
-        modelAndView.addObject("loggedUser", user);
-
-        List<Item> allitems = itemRepository.findAll();
-        modelAndView.addObject("allItems", allitems);
         modelAndView.setViewName("shoppingCart");
-
-
         return modelAndView;
     }
 
-    @GetMapping("/addToCart")
-    public ModelAndView addToCart(){
+
+    @GetMapping("/addToCart/{id}")
+    public ModelAndView addToCart(@PathVariable String id, @SessionAttribute("currentCart") Cart cart){
         ModelAndView modelAndView = new ModelAndView();
-        Cart cart = new Cart();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByUserName(auth.getName());
-        cartService.saveCart(cart, user);
-        modelAndView.addObject("loggedUser", user);
-        modelAndView.addObject("cart", cart);
+        CartItem cartItem = new CartItem();
+
+        cartItemService.saveCartItem(cartItem, itemRepository.getById(Long.parseLong(id)), cart);
+//        List<CartItem> cartItems = cartItemRepository.findAll();
+//        modelAndView.addObject("cartItems", cartItems);
         modelAndView.setViewName("shoppingCartDetails");
         return modelAndView;
     }
+
+
+
+
+
 }
