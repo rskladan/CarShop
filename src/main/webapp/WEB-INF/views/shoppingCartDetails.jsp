@@ -17,9 +17,9 @@
     <tr>
         <td>NO</td>
         <td>Name</td>
-        <td></td>
+        <td> </td>
         <td>Quantity</td>
-        <td></td>
+        <td> </td>
         <td>Price</td>
     </tr>
 
@@ -35,6 +35,7 @@
             <td>${item.quantity}</td>
             <td><a href="increaseAmount/${item.id}">+</a></td>
             <td>${item.totalPrice}</td>
+            <td><a href="removeItemFromCart/${item.id}">Usuń</a></td>
         </tr>
     </c:forEach>
 

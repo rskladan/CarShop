@@ -7,7 +7,9 @@ import pl.coderslab.carshop.item.Item;
 import pl.coderslab.carshop.item.ItemRepository;
 import pl.coderslab.carshop.user.UserRepository;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class CartItemService {
@@ -36,22 +38,19 @@ public class CartItemService {
         return cartItemRepository.save(cartItem);
     }
 
-    public void increaseAmount(Long id) {
+    @Transactional
+    public void deleteItem(Long id){
         CartItem cartItem = cartItemRepository.findCartItemById(id);
-        cartItem.setQuantity(cartItem.getQuantity()+1);
+        cartItemRepository.delete(cartItem);
+    }
+
+    public void updateAmount(Long id, int amount){
+        CartItem cartItem = cartItemRepository.findCartItemById(id);
+        cartItem.setQuantity(amount);
         BigDecimal totalCost = cartItem.getItem().getPrice().multiply(new BigDecimal(cartItem.getQuantity()));
         cartItem.setTotalPrice(totalCost);
         cartItemRepository.save(cartItem);
     }
-
-    public void decreaseAmount(Long id) {
-        CartItem cartItem = cartItemRepository.findCartItemById(id);
-        cartItem.setQuantity(cartItem.getQuantity()-1);
-        BigDecimal totalCost = cartItem.getItem().getPrice().multiply(new BigDecimal(cartItem.getQuantity()));
-        cartItem.setTotalPrice(totalCost);
-        cartItemRepository.save(cartItem);
-    }
-
 
 
 }

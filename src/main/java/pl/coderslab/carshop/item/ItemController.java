@@ -13,10 +13,6 @@ public class ItemController {
 
     private final ItemRepository itemRepository;
 
-    @GetMapping("/home")
-    public String home(){
-        return "home";
-    }
 
 
 }

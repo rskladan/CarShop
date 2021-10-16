@@ -37,6 +37,12 @@ public class UserController {
     private HttpSession httpSession;
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+
+    @GetMapping("/home")
+    public String home(){
+        return "home";
+    }
+
     @RequestMapping(value="/registration", method = RequestMethod.GET)
     public ModelAndView registration(){
         ModelAndView modelAndView = new ModelAndView();
@@ -137,12 +143,25 @@ public class UserController {
     public ModelAndView addToCart(@PathVariable String id, @SessionAttribute("shoppingCart") Cart cart){
         ModelAndView modelAndView = new ModelAndView();
         CartItem cartItem = new CartItem();
+        Item itemToAdd = itemRepository.getById(Long.parseLong(id));
+        boolean isInCart = false;
 
+        List<CartItem> cartItemList2 = cartItemRepository.findCartItemsByCartId(cart.getId());
 
-        CartItem cartItemAdded = cartItemService.saveCartItem(cartItem, itemRepository.getById(Long.parseLong(id)), cart);
-        modelAndView.addObject("cartItemAdded", cartItemAdded);
+        for (int i = 0; i < cartItemList2.size(); i++) {
+            if(cartItemList2.get(i).getItem().equals(itemToAdd)) {
+                isInCart = true;
+                int amount = cartItemList2.get(i).getQuantity()+1;
+                cartItemService.updateAmount(cartItemList2.get(i).getId(), amount);
+            }
+        }
 
-        List<CartItem> cartItemList = cartItemRepository.findCartItemsByCart_Id(cart.getId());
+        if(!isInCart){
+            CartItem cartItemAdded = cartItemService.saveCartItem(cartItem, itemRepository.getById(Long.parseLong(id)), cart);
+            modelAndView.addObject("cartItemAdded", cartItemAdded);
+        }
+
+        List<CartItem> cartItemList = cartItemRepository.findCartItemsByCartId(cart.getId());
         modelAndView.addObject("cartItems", cartItemList);
 
         cartService.updateValueOfCart(cart);
@@ -156,7 +175,7 @@ public class UserController {
     public ModelAndView getShoppingCartDetails(@SessionAttribute("shoppingCart") Cart cart){
         ModelAndView modelAndView = new ModelAndView();
 
-        List<CartItem> cartItemList = cartItemRepository.findCartItemsByCart_Id(cart.getId());
+        List<CartItem> cartItemList = cartItemRepository.findCartItemsByCartId(cart.getId());
         modelAndView.addObject("cartItems", cartItemList);
 
         cartService.updateValueOfCart(cart);
@@ -169,13 +188,22 @@ public class UserController {
 
     @GetMapping("/increaseAmount/{id}")
     public String increaseAmount(@PathVariable String id){
-        cartItemService.increaseAmount(Long.parseLong(id));
+        int amount = cartItemRepository.findCartItemById(Long.parseLong(id)).getQuantity()+1;
+        cartItemService.updateAmount(Long.parseLong(id), amount);
         return "redirect:/shoppingCartDetails";
     }
 
     @GetMapping("/decreaseAmount/{id}")
     public String decreaseAmount(@PathVariable String id){
-        cartItemService.decreaseAmount(Long.parseLong(id));
+        int amount = cartItemRepository.findCartItemById(Long.parseLong(id)).getQuantity()-1;
+        cartItemService.updateAmount(Long.parseLong(id), amount);
         return "redirect:/shoppingCartDetails";
     }
+
+    @GetMapping("/removeItemFromCart/{id}")
+    public String removeItemFromCart(@PathVariable String id){
+        cartItemService.deleteItem(Long.parseLong(id));
+        return "redirect:/shoppingCartDetails";
+    }
+
 }

@@ -35,7 +35,7 @@
         <td>${item.manufacturer.name}</td>
         <td><a href="/addToCart/${item.id}">Add to cart</a></td>
 
-        
+
 
     </tr>
     </c:forEach>
