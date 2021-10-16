@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.coderslab.carshop.user.User;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
@@ -24,12 +25,17 @@ public class CartService {
 
     private final Logger log = LoggerFactory.getLogger((getClass()));
 
-    public void saveCart(Cart cart, User user){
+    public Cart saveCart(Cart cart, User user){
         LocalDateTime localDateTime = LocalDateTime.now();
 
         cart.setUser(user);
-//        cart.setCreatedDate(Timestamp.valueOf(localDateTime));
-        cartRepository.save(cart);
+        cart.setTotalValue(BigDecimal.ZERO);
+        return cartRepository.save(cart);
+    }
+
+    public Cart updateValueOfCart(Cart cart){
+        cart.setTotalValue(cartItemRepository.countValueOfCart(cart.getId()));
+        return cartRepository.save(cart);
     }
 
 

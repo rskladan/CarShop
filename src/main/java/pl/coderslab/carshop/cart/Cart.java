@@ -8,6 +8,7 @@ import pl.coderslab.carshop.user.User;
 import javax.persistence.*;
 
 import javax.persistence.Entity;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -24,5 +25,7 @@ public class Cart {
 
     @ManyToOne
     private User user;
+
+    private BigDecimal totalValue;
 
 }

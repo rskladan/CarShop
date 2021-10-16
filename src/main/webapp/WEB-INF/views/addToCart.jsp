@@ -13,13 +13,14 @@
 
 <a href="/shoppingCart">Powrót do sklepu</a>
 
+<br>
+<p>Dodano cartItem o id: ${cartItemAdded.item.name}</p>
+
 <table>
     <tr>
         <td>NO</td>
         <td>Name</td>
-        <td></td>
         <td>Quantity</td>
-        <td></td>
         <td>Price</td>
     </tr>
 
@@ -27,17 +28,10 @@
         <tr>
             <td>${number.count}</td>
             <td>${item.item.name}</td>
-            <c:if test = "${item.quantity>0}">
-            <td>
-                <a href="decreaseAmount/${item.id}">-</a>
-            </td>
-            </c:if>
             <td>${item.quantity}</td>
-            <td><a href="increaseAmount/${item.id}">+</a></td>
-            <td>${item.totalPrice}</td>
+            <td>${item.price}</td>
         </tr>
     </c:forEach>
-
     <tr>
         <td>TOTAL:</td>
         <td>${cartValue}</td>

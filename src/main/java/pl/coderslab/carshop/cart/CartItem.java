@@ -24,6 +24,8 @@ public class CartItem {
 
     private BigDecimal price;
 
+    private BigDecimal totalPrice;
+
 //    @ManyToMany(fetch = FetchType.EAGER)
 //    @JoinTable(name = "cartItem_cart", joinColumns = @JoinColumn(name = "cartItem_id"), inverseJoinColumns = @JoinColumn(name = "cart_id"))
 //    private Set<CartItem> carts;

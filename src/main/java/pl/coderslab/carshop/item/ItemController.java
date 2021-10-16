@@ -18,11 +18,5 @@ public class ItemController {
         return "home";
     }
 
-    @GetMapping("/allItems")
-    public String findAllItems(Model model) {
-        List<Item> allItems = itemRepository.findAll();
-        model.addAttribute("allItems", allItems);
-        return "item-list";
-    }
 
 }

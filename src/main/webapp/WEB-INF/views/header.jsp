@@ -8,6 +8,9 @@
         <div>
         <c:if test = "${loggedUser != null}">
             Hello
+            <c:if test = "${shoppingCart != null}">
+            <a href="/shoppingCartDetails">Shopping Cart</a>
+            </c:if>
             <a href="/accountInfo"> ${loggedUser.name}</a>
             <a href="/logout">Logout</a>
         </c:if>
