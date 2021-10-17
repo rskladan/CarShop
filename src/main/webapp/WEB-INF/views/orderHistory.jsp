@@ -8,26 +8,30 @@
 </head>
 <body>
 
-<table>
-    <tr>
-        <td>Order id</td>
-        <td>Order value</td>
-        <td>Order date</td>
-        <td> </td>
-    </tr>
+<c:if test="${orderList.size()<1}">
+    <h3>Brak zamówień</h3>
+</c:if>
 
-    <c:forEach var="order" items="${orderList}">
+<c:if test="${orderList.size()>0}">
+    <table>
         <tr>
-            <td>${order.id}</td>
-            <td>${order.cart.totalValue}</td>
-            <td>${order.dateTime.toLocalDate()}</td>
-            <td><a href="/orderDetails/${order.id}">Order details</a></td>
-
+            <td>Order id</td>
+            <td>Order value</td>
+            <td>Order date</td>
+            <td> </td>
         </tr>
-    </c:forEach>
+        <c:forEach var="order" items="${orderList}">
+            <tr>
+                <td>${order.id}</td>
+                <td>${order.cart.totalValue}</td>
+                <td>${order.dateTime.toLocalDate()}</td>
+                <td><a href="/orderDetails/${order.id}">Order details</a></td>
+            </tr>
+        </c:forEach>
+    </table>
+</c:if>
 
-
-</table>
+<a href="/welcome">Back to main page</a>
 
 </body>
 </html>

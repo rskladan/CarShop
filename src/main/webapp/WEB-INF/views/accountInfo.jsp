@@ -59,7 +59,7 @@
     </tr>
 
     <button type="submit">Edit user</button>
-    <a href="/shoppingCart">Back</a>
+    <a href="/welcome">Back</a>
 
   </table>
   </form:form>

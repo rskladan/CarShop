@@ -14,7 +14,7 @@
 
 <br>
 
-<a href="/shoppingCart">Shopping cart</a>
+<a href="/shoppingCart">Go to store</a>
 <a href="/accountInfo">Edit user</a>
 <a href="/orderHistory">Order history</a>
 

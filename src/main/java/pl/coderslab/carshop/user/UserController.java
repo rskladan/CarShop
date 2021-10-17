@@ -39,13 +39,11 @@ public class UserController {
         User userExists = userService.findByUserName(user.getUsername());
         User emailExists = userService.findUserByEmail(user.getEmail());
         if (userExists != null) {
-            bindingResult
-                    .rejectValue("username", "error.user",
+            bindingResult.rejectValue("username", "error.user",
                             "There is already a user registered with the user name provided");
         }
         if (emailExists != null) {
-            bindingResult
-                    .rejectValue("email", "error.user",
+            bindingResult.rejectValue("email", "error.user",
                             "There is already a user registered with the email provided");
         }
 
@@ -53,7 +51,6 @@ public class UserController {
             modelAndView.setViewName("registration");
         } else {
             userService.saveUser(user);
-            modelAndView.addObject("successMessage", "User has been registered successfully");
             modelAndView.addObject("user", new User());
             modelAndView.setViewName("redirect:/login");
         }
@@ -86,12 +83,19 @@ public class UserController {
     }
 
     @PostMapping("/accountInfo/{id}")
-    public ModelAndView getAccountInfo(@Valid @ModelAttribute("loggedUser") User user, BindingResult result, @PathVariable(value="id") String id ) {
+    public ModelAndView getAccountInfo(@Valid @ModelAttribute("loggedUser") User user, BindingResult bindingResult, @PathVariable(value="id") String id ) {
         ModelAndView modelAndView = new ModelAndView();
-        if(result.hasErrors()){
+        User emailExists = userService.findUserByEmail(user.getEmail());
+
+        if (emailExists != null && !emailExists.getId().equals(user.getId())) {
+            bindingResult
+                    .rejectValue("email", "error.user",
+                            "There is already a user registered with the email provided");
+        }
+
+        if(bindingResult.hasErrors()){
             modelAndView.setViewName("accountInfo");
         } else {
-            log.info("User details:" + user.toString());
             userService.updateUser(user);
             modelAndView.setViewName("/welcome");
         }
