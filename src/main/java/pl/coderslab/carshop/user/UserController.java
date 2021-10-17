@@ -74,7 +74,7 @@ public class UserController {
             userService.saveUser(user);
             modelAndView.addObject("successMessage", "User has been registered successfully");
             modelAndView.addObject("user", new User());
-            modelAndView.setViewName("login");
+            modelAndView.setViewName("redirect:/login");
         }
         return modelAndView;
     }
@@ -130,6 +130,14 @@ public class UserController {
             Cart cart = new Cart();
             cartService.saveCart(cart, user);
             modelAndView.addObject("shoppingCart", cart);
+        } else {
+            Cart cart = (Cart)model.getAttribute("shoppingCart");
+            List<CartItem> cartItemList = cartItemRepository.findCartItemsByCartId(cart.getId());
+            for (int i = 0; i < cartItemList.size(); i++) {
+                if(cartItemList.get(i).getQuantity()==0){
+                    cartItemService.deleteItem(cartItemList.get(i).getId());
+                }
+            }
         }
 
         List<Item> allitems = itemRepository.findAll();
