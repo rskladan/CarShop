@@ -41,8 +41,16 @@
 
     <tr>
         <td>TOTAL:</td>
-        <td>${cartValue}</td>
+        <td>${cartValue} PLN</td>
     </tr>
+    <br>
+
+    <c:if test = "${cartItems.size()>0}">
+    <form action="/finaliseOrder" method="post">
+        <button type="submit">Finalise order</button>
+    </form>
+    </c:if>
+
 </table>
 </body>
 </html>

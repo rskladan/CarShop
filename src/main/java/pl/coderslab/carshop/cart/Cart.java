@@ -9,8 +9,6 @@ import javax.persistence.*;
 
 import javax.persistence.Entity;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Set;
 
 @Entity
 @Table(name = "cart")

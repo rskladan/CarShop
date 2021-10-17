@@ -34,7 +34,7 @@
     </c:forEach>
     <tr>
         <td>TOTAL:</td>
-        <td>${cartValue}</td>
+        <td>${cartValue} PLN</td>
     </tr>
 </table>
 </body>
