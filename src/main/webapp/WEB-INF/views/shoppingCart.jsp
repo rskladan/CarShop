@@ -3,14 +3,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Shopping cart</title>
-    <link href='<c:url value="/WEB-INF/css/styles.css"/>' rel="stylesheet">
-</head>
+<jsp:include page="/WEB-INF/views/header.jsp"/>
 <body>
 
 <h2>Store</h2>
-<jsp:include page="/WEB-INF/views/header.jsp"/>
+
 <h3>List of items</h3>
 
 <table>

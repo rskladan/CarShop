@@ -3,9 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Shopping Cart Details</title>
-</head>
+    <jsp:include page="/WEB-INF/views/header.jsp"/>
 <body>
 
 <h2>Welcome, ${loggedUser.name} ${loggedUser.surname}</h2>

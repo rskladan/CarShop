@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<form:form method="post" action="/registration" modelAttribute="user">
+<form:form method="post" modelAttribute="user">
     Name: <form:input path="name"/></br>
     <form:errors path="name"/></br>
 
@@ -17,6 +17,8 @@
 
     Username: <form:input path="username"/></br>
     <form:errors path="username"/></br>
+
+    Role: <form:select path="userRole" items="${userRoles}" id="role"/></br>
 
     E-mail: <form:input path="email"/></br>
     <form:errors path="email"/></br>

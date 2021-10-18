@@ -27,18 +27,6 @@ import java.util.Properties;
 @SpringBootApplication
 public class CarShopApplication {
 
-
-
-    @Bean
-    public Validator validator() {
-        return new LocalValidatorFactoryBean();
-    }
-
-    @Bean(name="localeResolver")
-    public LocaleContextResolver getLocaleContextResolver() {
-        return new SessionLocaleResolver();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(CarShopApplication.class, args);
     }

@@ -6,10 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,37 +28,50 @@ public class UserController {
         return "home";
     }
 
+//    @GetMapping("/registration")
+//    public ModelAndView registration(ModelAndView modelAndView){
+//        modelAndView.addObject("user", new User());
+//        modelAndView.setViewName("registration");
+//        return modelAndView;
+//    }
+//
+//    @PostMapping("/registration")
+//    public ModelAndView createNewUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, ModelAndView modelAndView) {
+//        System.out.println(user);
+//        User userExists = userService.findByUserName(user.getUsername());
+//        User emailExists = userService.findUserByEmail(user.getEmail());
+//        if (userExists != null) {
+//            bindingResult.rejectValue("username", "error.user",
+//                            "There is already a user registered with the user name provided");
+//        }
+//        if (emailExists != null) {
+//            bindingResult.rejectValue("email", "error.user",
+//                            "There is already a user registered with the email provided");
+//        }
+//
+//        if (bindingResult.hasErrors()) {
+//            modelAndView.setViewName("registration");
+//        } else {
+//            userService.saveUser(user);
+//            modelAndView.setViewName("redirect:/login");
+//        }
+//        return modelAndView;
+//    }
+
     @GetMapping("/registration")
-    public ModelAndView registration(){
-        ModelAndView modelAndView = new ModelAndView();
-        User user = new User();
-        modelAndView.addObject("user", user);
-        modelAndView.setViewName("registration");
-        return modelAndView;
+    public String addUser(Model model){
+        model.addAttribute("user", new User());
+        return "/registration";
     }
 
     @PostMapping("/registration")
-    public ModelAndView createNewUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult) {
-        ModelAndView modelAndView = new ModelAndView();
-        User userExists = userService.findByUserName(user.getUsername());
-        User emailExists = userService.findUserByEmail(user.getEmail());
-        if (userExists != null) {
-            bindingResult.rejectValue("username", "error.user",
-                            "There is already a user registered with the user name provided");
+    public String add(@Valid User user, BindingResult result){
+        if(result.hasErrors()){
+            return "/registration";
         }
-        if (emailExists != null) {
-            bindingResult.rejectValue("email", "error.user",
-                            "There is already a user registered with the email provided");
-        }
-
-        if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("registration");
-        } else {
-            userService.saveUser(user);
-            modelAndView.addObject("user", new User());
-            modelAndView.setViewName("redirect:/login");
-        }
-        return modelAndView;
+        System.out.println(user);
+        userService.saveUser(user);
+        return "/login";
     }
 
     @GetMapping("/login")
@@ -100,6 +117,13 @@ public class UserController {
             modelAndView.setViewName("/welcome");
         }
         return modelAndView;
+    }
+
+    @ModelAttribute("userRoles")
+    public List<String> userRoleList(){
+        return Stream.of(UserRole.values())
+                .map(UserRole::name)
+                .collect(Collectors.toList());
     }
 
 }
