@@ -2,6 +2,8 @@ package pl.coderslab.carshop.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,16 +62,6 @@ public class UserService {
         } else {
             return null;
         }
-    }
-
-    public boolean validateUser(User user) throws UserWrongValidationException {
-
-        if(findUserByEmail(user.getEmail()) != null && passwordEncoder.matches(user.getPassword(), findUserByEmail(user.getEmail()).getPassword())){
-            return true;
-        } else {
-            throw new UserWrongValidationException("Wrong login or password");
-        }
-
     }
 
 }

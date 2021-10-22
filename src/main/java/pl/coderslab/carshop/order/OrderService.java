@@ -20,7 +20,7 @@ public class OrderService {
     public Order saveOrder(Cart cart, User user){
         Order order = new Order();
         order.setCart(cart);
-        order.setDateTime(LocalDateTime.now());
+        order.setDateTime(LocalDateTime.now().toLocalDate().toString());
         order.setUser(user);
         return orderRepository.save(order);
     }

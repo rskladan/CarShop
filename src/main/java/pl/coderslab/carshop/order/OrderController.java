@@ -1,12 +1,8 @@
 package pl.coderslab.carshop.order;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import pl.coderslab.carshop.cart.*;
 import pl.coderslab.carshop.user.User;
 
@@ -28,36 +24,31 @@ public class OrderController {
         this.cartService = cartService;
     }
 
-    @PostMapping("/finaliseOrder")
-    public ModelAndView saveOrder(@SessionAttribute("shoppingCart") Cart cart, @SessionAttribute("loggedUser") User user, HttpSession session){
-        ModelAndView modelAndView = new ModelAndView();
+    @GetMapping("/finaliseOrder")
+    public String saveOrder(Model model, @SessionAttribute("shoppingCart") Cart cart, @SessionAttribute("loggedUser") User user, HttpSession session){
         Order order = orderService.saveOrder(cart, user);
-        modelAndView.addObject("order", order);
+        model.addAttribute("order", order);
 
         session.removeAttribute("shoppingCart");
 
-        modelAndView.setViewName("/showFinalisedOrder");
-        return modelAndView;
+        return "showFinalisedOrder";
     }
 
     @GetMapping("/orderHistory")
-    public ModelAndView showOrderHistory(@SessionAttribute("loggedUser") User user){
-        ModelAndView modelAndView = new ModelAndView();
+    public String showOrderHistory(Model model, @SessionAttribute("loggedUser") User user){
         List<Order> orderList = orderService.getOrderList(user);
-        modelAndView.addObject("orderList", orderList);
-        modelAndView.setViewName("orderHistory");
-        return modelAndView;
+        model.addAttribute("orderList", orderList);
+        return "orderHistory";
     }
 
     @GetMapping("/orderDetails/{id}")
-    public ModelAndView addToCart(@PathVariable String id){
-        ModelAndView modelAndView = new ModelAndView();
+    public String addToCart(@PathVariable String id, Model model){
         Order orderDetails = orderRepository.getById(Long.parseLong(id));
-        modelAndView.addObject("orderDetails", orderDetails);
+        model.addAttribute("orderDetails", orderDetails);
 
         List<CartItem> cartItemList = cartItemRepository.findCartItemsByCartId(orderRepository.getById(Long.parseLong(id)).getCart().getId());
-        modelAndView.addObject("cartItemList", cartItemList);
-        modelAndView.setViewName("orderDetails");
-        return modelAndView;
+        model.addAttribute("cartItemList", cartItemList);
+        return "orderDetails";
     }
+
 }

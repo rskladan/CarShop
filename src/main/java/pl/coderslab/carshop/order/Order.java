@@ -5,7 +5,6 @@ import pl.coderslab.carshop.cart.Cart;
 import pl.coderslab.carshop.user.User;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
@@ -16,7 +15,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private LocalDateTime dateTime;
+    private String dateTime;
 
     @OneToOne
     private Cart cart;

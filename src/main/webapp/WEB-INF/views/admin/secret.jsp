@@ -1,20 +1,16 @@
-<%--<%@ page isELIgnored="false" %>--%>
-<%--<%@ page contentType="text/html;charset=UTF-8" language="java" %>--%>
 <%--<!DOCTYPE html>--%>
-<%--<html>--%>
 <%--<head>--%>
-<%--    <title>Order</title>--%>
+<%--    <meta charset="UTF-8">--%>
+<%--    <title>Access Denied</title>--%>
 <%--</head>--%>
+
 <%--<body>--%>
 
-<%--<h2>Final order summary:</h2>--%>
-<%--<h3>Finalised order id: ${order.id}</h3>--%>
-<%--<h3>Finalised order cart value: ${order.cart.totalValue}</h3>--%>
+<%--<div class="page-title">Access Denied!</div>--%>
+<%--<h3 style="color:red;">Sorry, you can not access this page!</h3>--%>
 
-<%--<a href="/welcome">Back to main page</a>--%>
 <%--</body>--%>
 <%--</html>--%>
-
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
@@ -32,22 +28,27 @@
           rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/styles.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <header class="page-header">
+        <nav class="navbar navbar-expand-lg justify-content-around">
+            <a href="/home" class="navbar-brand main-logo">
+                Car Parts <span>Store</span>
+            </a>
+        </nav>
+    </header>
 </head>
 
 <body>
-<jsp:include page="/WEB-INF/views/header.jsp"/>
 
 <section class="dashboard-section">
     <div class="container pt-4 pb-4">
         <div class="border-dashed view-height">
             <div class="container w-75">
-                <form class="padding-medium text-center">
-                    <h1 class="text-color-darker">Your order has been placed successfully</h1>
-                    <span class="font-weight-bold">Final order summary:</span> <br>
-                    <span class="font-weight-bold">Finalised order id: ${order.id}</span> <br>
-                    <span class="font-weight-bold">Finalised order cart value: ${order.cart.totalValue}</span> <br>
-                    <a href="/welcome" class="btn btn-success rounded-0 pt-0 pb-0 pr-4 pl-4">Back to main page</a>
-                </form>
+                <div class="padding-medium text-center">
+                    <h1 class="text-color-darker">Super secret content</h1>
+                    <h1 class="text-color-darker">Only for admin</h1>
+
+                    <a href="/home" class="btn btn-color rounded-0">Home</a>
+                </div>
             </div>
         </div>
     </div>

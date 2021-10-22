@@ -34,22 +34,22 @@ public PasswordEncoder getPasswordEncoder(){
         auth.userDetailsService(userDetailsService);
     }
 
-    @Override
+        @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.headers().disable();
         http.authorizeRequests()
-                .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/login").permitAll()
+                .antMatchers("/home").permitAll()
                 .antMatchers("/registration").permitAll()
+                .antMatchers("/**").authenticated()
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .and()
                 .formLogin()
                 .loginPage("/login")
                 .failureUrl("/login?error=true")
-                .defaultSuccessUrl("/welcome")
-                .and()
-                .exceptionHandling()
+                .defaultSuccessUrl("/welcome", true)
+                .and().exceptionHandling()
                 .accessDeniedPage("/accessDenied");
-
     }
 }

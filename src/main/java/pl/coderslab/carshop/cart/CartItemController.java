@@ -1,20 +1,12 @@
 package pl.coderslab.carshop.cart;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 import pl.coderslab.carshop.item.Item;
 import pl.coderslab.carshop.item.ItemRepository;
-import pl.coderslab.carshop.user.User;
-import pl.coderslab.carshop.user.UserService;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -27,34 +19,8 @@ public class CartItemController {
     private final CartItemService cartItemService;
     private final CartItemRepository cartItemRepository;
 
-    @GetMapping("/shoppingCart")
-    public ModelAndView shoppingCart(Model model, @SessionAttribute("loggedUser") User user) {
-        ModelAndView modelAndView = new ModelAndView();
-
-        if(!model.containsAttribute("shoppingCart")) {
-            Cart cart = new Cart();
-            cartService.saveCart(cart, user);
-            modelAndView.addObject("shoppingCart", cart);
-        } else {
-            Cart cart = (Cart)model.getAttribute("shoppingCart");
-            List<CartItem> cartItemList = cartItemRepository.findCartItemsByCartId(cart.getId());
-            for (int i = 0; i < cartItemList.size(); i++) {
-                if(cartItemList.get(i).getQuantity()==0){
-                    cartItemService.deleteItem(cartItemList.get(i).getId());
-                }
-            }
-        }
-
-        List<Item> allitems = itemRepository.findAll();
-        modelAndView.addObject("itemsList", allitems);
-        modelAndView.setViewName("shoppingCart");
-        return modelAndView;
-    }
-
-
     @GetMapping("/addToCart/{id}")
-    public ModelAndView addToCart(@PathVariable String id, @SessionAttribute("shoppingCart") Cart cart){
-        ModelAndView modelAndView = new ModelAndView();
+    public String addToCart(Model model, @PathVariable String id, @SessionAttribute("shoppingCart") Cart cart){
         CartItem cartItem = new CartItem();
         Item itemToAdd = itemRepository.getById(Long.parseLong(id));
         boolean isInCart = false;
@@ -71,31 +37,34 @@ public class CartItemController {
 
         if(!isInCart){
             CartItem cartItemAdded = cartItemService.saveCartItem(cartItem, itemRepository.getById(Long.parseLong(id)), cart);
-            modelAndView.addObject("cartItemAdded", cartItemAdded);
+            model.addAttribute("cartItemAdded", cartItemAdded);
         }
 
         List<CartItem> cartItemList = cartItemRepository.findCartItemsByCartId(cart.getId());
-        modelAndView.addObject("cartItems", cartItemList);
+        model.addAttribute("cartItems", cartItemList);
 
         cartService.updateValueOfCart(cart);
-        modelAndView.addObject("cartValue", cart.getTotalValue());
+        model.addAttribute("cartValue", cart.getTotalValue());
 
-        modelAndView.setViewName("addToCart");
-        return modelAndView;
+        return "redirect:/welcome";
     }
 
     @GetMapping("/shoppingCartDetails")
-    public ModelAndView getShoppingCartDetails(@SessionAttribute("shoppingCart") Cart cart){
-        ModelAndView modelAndView = new ModelAndView();
+    public String getShoppingCartDetails(Model model, @SessionAttribute("shoppingCart") Cart cart){
+        int cartItemsAmount = 0;
 
         List<CartItem> cartItemList = cartItemRepository.findCartItemsByCartId(cart.getId());
-        modelAndView.addObject("cartItems", cartItemList);
+        model.addAttribute("cartItems", cartItemList);
+
+        for (int i = 0; i < cartItemList.size(); i++) {
+            cartItemsAmount += cartItemList.get(i).getQuantity();
+        }
+        model.addAttribute("cartItemsAmount", cartItemsAmount);
 
         cartService.updateValueOfCart(cart);
-        modelAndView.addObject("cartValue", cart.getTotalValue());
+        model.addAttribute("cartValue", cart.getTotalValue());
 
-        modelAndView.setViewName("shoppingCartDetails");
-        return modelAndView;
+        return "shoppingCartDetails";
     }
 
     @GetMapping("/increaseAmount/{id}")
